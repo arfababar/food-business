@@ -1,4 +1,4 @@
-# Baba Hafeez - Fast Food & Grill (Gujranwala)
+# Fast Food & Grill (Gujranwala)
 
 Production-ready e-commerce food ordering platform built for **Baba Hafeez** in Gujranwala, Pakistan.
 
