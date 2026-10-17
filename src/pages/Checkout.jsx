@@ -1,10 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { BUSINESS_CONFIG, isRestaurantOpen } from "../config/business";
 import { checkoutSchema } from "../lib/validation";
 import { createOrder } from "../services/api";
-import { buildWhatsAppOrderLink } from "../utils/whatsapp";
 import { 
   ArrowLeft, 
   CheckCircle, 
@@ -19,11 +18,58 @@ import {
   Loader2,
   RefreshCw
 } from "lucide-react";
+import { isSupabaseConfigured, supabase } from "../lib/supabase";
 
 export default function Checkout() {
   const { cart, cartSubtotal, clearCart } = useCart();
   const navigate = useNavigate();
   const openNow = isRestaurantOpen();
+  const isProd = import.meta.env.PROD;
+  const isDev = import.meta.env.DEV;
+
+  const [dbStatus, setDbStatus] = useState({
+    checked: false,
+    reachable: isSupabaseConfigured && Boolean(supabase),
+  });
+
+  useEffect(() => {
+    let isMounted = true;
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 1000);
+
+    async function checkReachability() {
+      if (!isSupabaseConfigured || !supabase) {
+        if (isMounted) setDbStatus({ checked: true, reachable: false });
+        return;
+      }
+      try {
+        const { error } = await supabase
+          .from("products")
+          .select("id")
+          .abortSignal(controller.signal)
+          .limit(1);
+
+        clearTimeout(timeoutId);
+        if (isMounted) {
+          setDbStatus({ checked: true, reachable: !error });
+        }
+      } catch {
+        clearTimeout(timeoutId);
+        if (isMounted) {
+          setDbStatus({ checked: true, reachable: false });
+        }
+      }
+    }
+
+    checkReachability();
+    return () => {
+      isMounted = false;
+      clearTimeout(timeoutId);
+      controller.abort();
+    };
+  }, []);
+
+  const isDbOperational = dbStatus.reachable;
 
   const [selectedArea, setSelectedArea] = useState(BUSINESS_CONFIG.deliveryAreas[0].name);
 
@@ -85,6 +131,12 @@ export default function Checkout() {
     setErrors({});
     setIsSubmitting(true);
 
+    if (isProd && !isDbOperational) {
+      setSubmitError("Online ordering is currently unavailable. Live database connection is required.");
+      setIsSubmitting(false);
+      return;
+    }
+
     try {
       // 1. Submit order to database (prices verified server-side)
       const order = await createOrder({
@@ -99,30 +151,27 @@ export default function Checkout() {
         notes: formData.instructions.trim(),
       });
 
-      // 2. Prepare WhatsApp link with confirmed order number
-      const waLink = buildWhatsAppOrderLink({
-        orderNumber: order.orderId,
-        customerName: order.customer.fullName,
-        phone: order.customer.phone,
-        address: order.customer.address,
-        area: order.customer.area,
-        city: order.customer.city,
-        items: order.items,
-        total: order.total,
-        deliveryFee: order.deliveryFee,
-        instructions: order.customer.instructions,
-      });
-
-      // Open WhatsApp in new tab
-      try {
-        window.open(waLink, "_blank");
-      } catch (e) {
-        console.warn("Could not auto-open WhatsApp window", e);
-      }
-
-      // 3. Clear cart and redirect to order success
+      // 2. Clear cart and navigate to OrderSuccess with full order state
       clearCart();
-      navigate("/order-success", { state: { orderId: order.orderId, order } });
+      navigate(`/order-success?order=${encodeURIComponent(order.orderId)}`, {
+        state: {
+          orderDetails: {
+            orderId: order.orderId,
+            customer: {
+              fullName: order.customer.fullName,
+              phone: order.customer.phone,
+              address: order.customer.address,
+              area: order.customer.area,
+              city: order.customer.city || BUSINESS_CONFIG.city,
+              instructions: order.customer.instructions || "",
+            },
+            items: order.items,
+            total: order.total,
+            deliveryFee: order.deliveryFee,
+            subtotal: order.subtotal,
+          },
+        },
+      });
     } catch (err) {
       console.error("Order submission failure:", err);
       setSubmitError(
@@ -142,6 +191,34 @@ export default function Checkout() {
         >
           <ArrowLeft className="w-4 h-4" /> Back to Cart
         </Link>
+
+        {/* Production database disconnected error */}
+        {isProd && !isDbOperational && (
+          <div className="mb-6 p-4 sm:p-5 rounded-2xl bg-rose-50 border border-rose-300 flex items-start gap-3 text-rose-900 text-sm shadow-xs">
+            <AlertTriangle className="w-5 h-5 text-rose-600 flex-shrink-0 mt-0.5" />
+            <div>
+              <strong className="block font-bold">Online Checkout Currently Unavailable</strong>
+              <p className="text-xs text-rose-700 mt-1">
+                Our order database is currently unreachable. Online checkout is temporarily suspended.
+                Please call us directly at{" "}
+                <a href={`tel:${BUSINESS_CONFIG.hotlineTel}`} className="underline font-bold">
+                  {BUSINESS_CONFIG.hotlineDisplay}
+                </a>{" "}
+                or message us on WhatsApp to place your order.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Dev-only offline demo mode banner */}
+        {isDev && !isDbOperational && (
+          <div className="mb-6 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center gap-3 text-amber-900 text-xs">
+            <AlertTriangle className="w-4 h-4 text-amber-600 flex-shrink-0" />
+            <span>
+              <strong>OFFLINE DEMO MODE (DEV ONLY):</strong> Database connection is offline. Orders will be simulated locally.
+            </span>
+          </div>
+        )}
 
         {/* Closed kitchen warning */}
         {!openNow && (
@@ -382,7 +459,7 @@ export default function Checkout() {
               {/* Submit Button with Spinner & Double-Submit Protection */}
               <button
                 type="submit"
-                disabled={isSubmitting}
+                disabled={isSubmitting || (isProd && !isDbOperational)}
                 className="w-full py-4 bg-amber-500 hover:bg-amber-600 text-neutral-950 font-black rounded-2xl shadow-lg shadow-amber-500/25 transition active:scale-98 text-base flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isSubmitting ? (
@@ -390,6 +467,8 @@ export default function Checkout() {
                     <Loader2 className="w-5 h-5 animate-spin" />
                     <span>Verifying & Placing Order...</span>
                   </>
+                ) : isProd && !isDbOperational ? (
+                  <span>Checkout Blocked (Database Offline)</span>
                 ) : (
                   <>
                     <CheckCircle className="w-5 h-5" />
@@ -397,6 +476,11 @@ export default function Checkout() {
                   </>
                 )}
               </button>
+
+              {/* WhatsApp Confirmation Reminder */}
+              <p className="text-center text-xs font-semibold text-neutral-500">
+                After placing your order you'll send it to us on WhatsApp to confirm.
+              </p>
 
               {submitError && (
                 <button

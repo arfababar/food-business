@@ -75,10 +75,10 @@ export default function Menu() {
   }, [activeCategory, searchQuery, sortBy, productsList]);
 
   return (
-    <div className="bg-neutral-50 min-h-screen py-10">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header Title */}
-        <div className="text-center max-w-2xl mx-auto mb-10">
+    <div className="bg-neutral-50 min-h-screen py-4 sm:py-10">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+        {/* Header Title (Hidden or very compact on mobile) */}
+        <div className="text-center max-w-2xl mx-auto mb-4 sm:mb-10 hidden sm:block">
           <span className="text-amber-600 font-extrabold text-xs uppercase tracking-widest block mb-1">
             Delicious & Fresh
           </span>
@@ -91,81 +91,86 @@ export default function Menu() {
         </div>
 
         {/* Filter and Search Controls Bar */}
-        <div className="bg-white rounded-3xl p-4 sm:p-6 border border-neutral-200/80 shadow-xs mb-8 space-y-4">
-          <div className="flex flex-col md:flex-row gap-4 items-stretch md:items-center justify-between">
-            {/* Search Input */}
-            <div className="relative flex-1">
-              <Search className="w-5 h-5 text-neutral-400 absolute left-4 top-1/2 -translate-y-1/2" />
-              <input
-                type="text"
-                placeholder="Search for burgers, deals, loaded fries..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-10 py-3 rounded-2xl bg-neutral-50 border border-neutral-200 focus:outline-hidden focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 text-sm font-medium transition"
-              />
-              {searchQuery && (
-                <button
-                  onClick={() => setSearchQuery("")}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              )}
-            </div>
+        <div className="mb-4 sm:mb-6 space-y-2.5 sm:space-y-3">
+          {/* Search Input & Sort */}
+          <div className="bg-white rounded-2xl p-2.5 sm:p-5 border border-neutral-200/80 shadow-xs">
+            <div className="flex flex-col sm:flex-row gap-2.5 sm:gap-3 items-stretch sm:items-center justify-between">
+              {/* Search Input */}
+              <div className="relative flex-1">
+                <Search className="w-4 h-4 sm:w-5 sm:h-5 text-neutral-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  placeholder="Search for burgers, deals, loaded fries..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-9 pr-8 py-2 sm:py-3 rounded-xl sm:rounded-2xl bg-neutral-50 border border-neutral-200 focus:outline-hidden focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 text-xs sm:text-sm font-medium transition"
+                />
+                {searchQuery && (
+                  <button
+                    onClick={() => setSearchQuery("")}
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
 
-            {/* Sorting Dropdown */}
-            <div className="flex items-center gap-2">
-              <SlidersHorizontal className="w-4 h-4 text-neutral-400 hidden sm:block" />
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="py-3 px-4 rounded-2xl bg-neutral-50 border border-neutral-200 text-sm font-medium text-neutral-800 focus:outline-hidden focus:border-amber-500 cursor-pointer"
-              >
-                <option value="featured">Sort by: Featured</option>
-                <option value="price-low">Price: Low to High</option>
-                <option value="price-high">Price: High to Low</option>
-                <option value="rating">Highest Rated</option>
-              </select>
+              {/* Sorting Dropdown */}
+              <div className="flex items-center gap-2">
+                <SlidersHorizontal className="w-4 h-4 text-neutral-400 hidden sm:block" />
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="w-full sm:w-auto py-2 px-3 sm:py-3 sm:px-4 rounded-xl sm:rounded-2xl bg-neutral-50 border border-neutral-200 text-xs sm:text-sm font-medium text-neutral-800 focus:outline-hidden focus:border-amber-500 cursor-pointer"
+                >
+                  <option value="featured">Sort by: Featured</option>
+                  <option value="price-low">Price: Low to High</option>
+                  <option value="price-high">Price: High to Low</option>
+                  <option value="rating">Highest Rated</option>
+                </select>
+              </div>
             </div>
           </div>
 
-          {/* Category Tabs */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 pt-1 no-scrollbar">
-            {CATEGORIES.map((cat) => {
-              const count =
-                cat.id === "all"
-                  ? productsList.length
-                  : productsList.filter((p) => p.category === cat.id).length;
-              const isSelected = activeCategory === cat.id;
+          {/* Sticky Category Tabs (Sticky under navbar at top-16 on mobile, top-20 on desktop) */}
+          <div className="sticky top-16 sm:top-20 z-30 bg-neutral-50/95 backdrop-blur-md -mx-3 px-3 sm:mx-0 sm:px-0 py-1.5 sm:py-2 border-b border-neutral-200/60 sm:border-none shadow-xs sm:shadow-none">
+            <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar py-0.5 sm:py-1">
+              {CATEGORIES.map((cat) => {
+                const count =
+                  cat.id === "all"
+                    ? productsList.length
+                    : productsList.filter((p) => p.category === cat.id).length;
+                const isSelected = activeCategory === cat.id;
 
-              return (
-                <button
-                  key={cat.id}
-                  onClick={() => handleCategoryChange(cat.id)}
-                  className={`px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all duration-150 flex items-center gap-2 cursor-pointer ${
-                    isSelected
-                      ? "bg-neutral-900 text-white shadow-sm"
-                      : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200/80"
-                  }`}
-                >
-                  <span>{cat.label}</span>
-                  <span
-                    className={`text-[11px] px-2 py-0.5 rounded-full font-black ${
+                return (
+                  <button
+                    key={cat.id}
+                    onClick={() => handleCategoryChange(cat.id)}
+                    className={`px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-xl sm:rounded-2xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all duration-150 flex items-center gap-1.5 sm:gap-2 cursor-pointer flex-shrink-0 ${
                       isSelected
-                        ? "bg-amber-500 text-neutral-900"
-                        : "bg-neutral-200 text-neutral-600"
+                        ? "bg-neutral-900 text-white shadow-sm"
+                        : "bg-white text-neutral-600 hover:bg-neutral-100 border border-neutral-200/80"
                     }`}
                   >
-                    {count}
-                  </span>
-                </button>
-              );
-            })}
+                    <span>{cat.label}</span>
+                    <span
+                      className={`text-[10px] sm:text-[11px] px-1.5 sm:px-2 py-0.5 rounded-full font-black ${
+                        isSelected
+                          ? "bg-amber-500 text-neutral-900"
+                          : "bg-neutral-100 text-neutral-600"
+                      }`}
+                    >
+                      {count}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </div>
 
         {/* Results Info */}
-        <div className="flex justify-between items-center mb-6 px-1">
+        <div className="flex justify-between items-center mb-3 sm:mb-6 px-1">
           <p className="text-xs text-neutral-500 font-medium">
             Showing <strong className="text-neutral-900">{filteredProducts.length}</strong> items
             {searchQuery && (
@@ -192,7 +197,7 @@ export default function Menu() {
             <p className="text-sm font-bold text-neutral-600">Loading fresh menu items...</p>
           </div>
         ) : filteredProducts.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6">
             {filteredProducts.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}

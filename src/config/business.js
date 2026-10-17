@@ -8,10 +8,9 @@ export const BUSINESS_CONFIG = {
     "Handcrafted crispy zingers, gourmet smashed beef patties, and loaded cheesy fries in Gujranwala.",
   
   // Contacts
-  // Note: Replace dummy phone when real SIM/WhatsApp is provisioned
-  whatsappNumber: "923000000000",
-  hotlineDisplay: "0300-0000000",
-  hotlineTel: "+923000000000",
+  whatsappNumber: "923256800347",
+  hotlineDisplay: "0325-6800347",
+  hotlineTel: "+923256800347",
   email: "orders@babahafeez.com",
 
   // Location (Gujranwala)

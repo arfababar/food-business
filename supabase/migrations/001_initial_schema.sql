@@ -291,34 +291,48 @@ begin
 end;
 $$;
 
--- Function 3: Safe lookup for OrderSuccess screen by order number
-create or replace function public.get_order_by_number(p_order_number text)
+-- Function 3: Safe lookup for OrderSuccess screen by order number (Security Definer)
+-- Returns ONLY customer-safe fields for that single order
+create or replace function public.get_order_by_number(order_number text)
 returns json
 language plpgsql
 security definer
+set search_path = public
 as $$
 declare
   v_order record;
 begin
   select 
-    id, order_number, customer_name, phone, address, area, city,
-    items, subtotal, delivery_fee, discount, total, status, created_at
+    o.order_number,
+    o.customer_name,
+    o.phone,
+    o.address,
+    o.area,
+    o.city,
+    o.notes,
+    o.items,
+    o.subtotal,
+    o.delivery_fee,
+    o.discount,
+    o.total,
+    o.status,
+    o.created_at
   into v_order
-  from public.orders
-  where upper(order_number) = upper(trim(p_order_number));
+  from public.orders o
+  where upper(o.order_number) = upper(trim(get_order_by_number.order_number));
 
   if not found then
     return null;
   end if;
 
   return json_build_object(
-    'order_id', v_order.id,
     'order_number', v_order.order_number,
     'customer_name', v_order.customer_name,
     'phone', v_order.phone,
     'address', v_order.address,
     'area', v_order.area,
     'city', v_order.city,
+    'notes', v_order.notes,
     'items', v_order.items,
     'subtotal', v_order.subtotal,
     'delivery_fee', v_order.delivery_fee,
@@ -329,6 +343,9 @@ begin
   );
 end;
 $$;
+
+revoke all on function public.get_order_by_number(text) from public;
+grant execute on function public.get_order_by_number(text) to anon, authenticated;
 
 -- ============================================================================
 -- INITIAL SEED DATA

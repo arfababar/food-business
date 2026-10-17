@@ -28,7 +28,7 @@ Populate your Supabase credentials:
 VITE_SUPABASE_URL=https://your-project.supabase.co
 VITE_SUPABASE_ANON_KEY=your-anon-key-here
 ```
-*(Note: If environment variables are omitted, the application runs in secure offline fallback mode with local storage persistence and mock admin credentials.)*
+*(Note: If environment variables are omitted, the application runs in secure offline fallback mode with local storage persistence.)*
 
 ### 3. Run Database Migrations
 1. Open your Supabase project SQL Editor at [app.supabase.com](https://app.supabase.com).
@@ -40,12 +40,6 @@ VITE_SUPABASE_ANON_KEY=your-anon-key-here
    - `order_number_seq` sequential generator
    - `place_order` stored procedure (recalculates line item prices server-side)
    - `get_order_by_number` secure public lookup RPC
-
-### 4. Create Admin User
-1. Go to **Authentication > Users** in your Supabase dashboard.
-2. Click **Add User** and create an admin email & password (e.g., `admin@babahafeez.com`).
-3. You can now log into `/admin` with this account to view incoming orders, update dispatch status, toggle sold-out products, and manage promo codes.
-*(In offline fallback mode, use `admin@babahafeez.com` and password `admin123`)*
 
 ---
 
@@ -87,7 +81,7 @@ npm run build
 3. In Project Settings > Environment Variables, add:
    - `VITE_SUPABASE_URL`
    - `VITE_SUPABASE_ANON_KEY`
-4. The included `vercel.json` automatically handles SPA route rewrites for `/menu`, `/checkout`, `/admin`, etc.
+4. The included `vercel.json` automatically handles SPA route rewrites for `/menu`, `/cart`, `/checkout`, etc.
 
 ### Deploy to Netlify
 1. Connect repository on [Netlify](https://netlify.com).

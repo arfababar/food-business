@@ -52,11 +52,11 @@ export default function Navbar() {
 
       {/* Main Navigation Bar */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20">
+        <div className="flex items-center justify-between h-16 sm:h-20">
           {/* Logo & Brand */}
-          <Link to="/" className="flex items-center space-x-3 group">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-600 to-amber-500 flex items-center justify-center text-white shadow-lg shadow-amber-500/25 group-hover:scale-105 transition-transform">
-              <UtensilsCrossed className="w-6 h-6" />
+          <Link to="/" className="flex items-center space-x-2.5 sm:space-x-3 group">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gradient-to-tr from-amber-600 to-amber-500 flex items-center justify-center text-white shadow-md sm:shadow-lg shadow-amber-500/25 group-hover:scale-105 transition-transform">
+              <UtensilsCrossed className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
             <div>
               <span className="text-xl sm:text-2xl font-black tracking-tight text-neutral-900 block leading-tight">

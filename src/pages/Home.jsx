@@ -177,7 +177,7 @@ export default function Home() {
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
             {featuredProducts.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
@@ -200,46 +200,9 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 sm:gap-6">
             {hotDeals.map((deal) => (
-              <div
-                key={deal.id}
-                className="bg-white rounded-3xl p-6 sm:p-8 flex flex-col sm:flex-row gap-6 items-center shadow-xl border border-amber-200/50"
-              >
-                <div className="w-full sm:w-48 h-48 rounded-2xl overflow-hidden flex-shrink-0 bg-neutral-100">
-                  <img
-                    src={deal.image}
-                    alt={deal.name}
-                    className="w-full h-full object-cover"
-                    width="192"
-                    height="192"
-                    loading="lazy"
-                  />
-                </div>
-                <div className="flex-1 flex flex-col justify-between text-left">
-                  <div>
-                    <span className="bg-rose-100 text-rose-700 text-[11px] font-black px-2.5 py-0.5 rounded-full uppercase">
-                      {deal.badge || "SAVE BIG"}
-                    </span>
-                    <h3 className="text-xl font-black text-neutral-900 mt-2 mb-1.5">{deal.name}</h3>
-                    <p className="text-xs text-neutral-600 leading-relaxed mb-4">{deal.description}</p>
-                  </div>
-                  <div className="flex items-center justify-between pt-2 border-t border-neutral-100">
-                    <div>
-                      <span className="text-2xl font-black text-neutral-900">Rs. {deal.price}</span>
-                      {deal.originalPrice && (
-                        <span className="text-xs text-neutral-400 line-through ml-2">Rs. {deal.originalPrice}</span>
-                      )}
-                    </div>
-                    <Link
-                      to={`/menu/${deal.id}`}
-                      className="px-4 py-2.5 bg-neutral-900 hover:bg-amber-600 text-white rounded-xl text-xs font-bold transition shadow-sm"
-                    >
-                      View Deal
-                    </Link>
-                  </div>
-                </div>
-              </div>
+              <ProductCard key={deal.id} product={deal} />
             ))}
           </div>
         </div>

@@ -1,0 +1,4 @@
+-- ARCHIVED MIGRATION STUB
+-- This file (20261014_init_schema.sql) is archived and superseded.
+-- The canonical, active migration file for Baba Hafeez is:
+-- supabase/migrations/001_initial_schema.sql

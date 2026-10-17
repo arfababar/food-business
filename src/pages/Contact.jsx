@@ -132,7 +132,7 @@ export default function Contact() {
                     <input
                       type="text"
                       required
-                      placeholder="e.g. 0300-0000000"
+                      placeholder={`e.g. ${BUSINESS_CONFIG.hotlineDisplay}`}
                       value={formData.contact}
                       onChange={(e) => setFormData({ ...formData, contact: e.target.value })}
                       className="w-full px-4 py-3 rounded-xl border border-neutral-200 text-sm focus:outline-hidden focus:border-amber-500"

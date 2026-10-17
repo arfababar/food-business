@@ -97,8 +97,14 @@ export async function createOrder({ customer, cartItems, notes, promoCode }) {
     };
   }
 
-  // Local Secure Fallback when Supabase keys are not set yet
-  // Recalculates from fallback catalog to prevent client tampering
+  // In production builds, strictly block fallback: no local order storage, no fake order numbers
+  if (!import.meta.env.DEV) {
+    throw new Error(
+      "Online ordering is currently unavailable. Live database connection is required."
+    );
+  }
+
+  // Local Secure Fallback ONLY in Development Mode (import.meta.env.DEV)
   let calculatedSubtotal = 0;
   const verifiedItems = cartItems.map((cartItem) => {
     const catalogItem = fallbackProducts.find((p) => p.id === cartItem.product.id);
@@ -117,7 +123,7 @@ export async function createOrder({ customer, cartItems, notes, promoCode }) {
 
   const deliveryFee = calculatedSubtotal >= 1500 ? 0 : 150;
   const grandTotal = calculatedSubtotal + deliveryFee;
-  const orderNumber = `BH-${Math.floor(100000 + Math.random() * 900000)}`;
+  const orderNumber = `BH-DEV-${Math.floor(100000 + Math.random() * 900000)}`;
 
   const localOrder = {
     orderId: orderNumber,
@@ -129,6 +135,7 @@ export async function createOrder({ customer, cartItems, notes, promoCode }) {
     total: grandTotal,
     status: "new",
     createdAt: new Date().toISOString(),
+    isDevDemo: true,
   };
 
   try {
@@ -141,53 +148,93 @@ export async function createOrder({ customer, cartItems, notes, promoCode }) {
 }
 
 /**
- * Fetch single order by order number (safe public lookup)
+ * Fetch single order by order number (safe public lookup using get_order_by_number RPC)
+ * Returns { data, error }
  */
 export async function getOrderByNumber(orderNumber) {
+  if (!orderNumber || typeof orderNumber !== "string") {
+    return { data: null, error: null };
+  }
+
+  const cleanOrderNumber = orderNumber.trim();
+  if (!cleanOrderNumber) {
+    return { data: null, error: null };
+  }
+
   if (isSupabaseConfigured && supabase) {
     try {
+      // Calls security-definer get_order_by_number(order_number)
       const { data, error } = await supabase.rpc("get_order_by_number", {
-        p_order_number: orderNumber,
+        order_number: cleanOrderNumber,
       });
 
-      if (!error && data) {
-        return {
+      if (error) {
+        return { data: null, error: error.message || "Failed to retrieve order from server" };
+      }
+
+      if (!data) {
+        return { data: null, error: null };
+      }
+
+      const fullName = (data.customer_name || "").trim();
+      const firstName = data.first_name || (fullName ? fullName.split(" ")[0] : "");
+
+      return {
+        data: {
           orderId: data.order_number,
           customer: {
-            fullName: data.customer_name,
-            phone: data.phone,
-            address: data.address,
-            area: data.area,
-            city: data.city,
+            fullName: fullName || "Valued Customer",
+            firstName: firstName || fullName || "Valued Customer",
+            phone: data.phone || null,
+            address: data.address || null,
+            area: data.area || null,
+            city: data.city || null,
             paymentMethod: "cod",
           },
-          items: data.items.map((i) => ({
-            product: { id: i.product_id, name: i.name, price: i.unit_price },
-            quantity: i.quantity,
+          items: (data.items || []).map((i) => ({
+            product: { id: i.product_id, name: i.name, price: Number(i.unit_price) },
+            quantity: Number(i.quantity),
           })),
-          subtotal: data.subtotal,
-          deliveryFee: data.delivery_fee,
-          discount: data.discount,
-          total: data.total,
-          status: data.status,
-          createdAt: data.created_at,
-        };
-      }
+          subtotal: Number(data.subtotal || 0),
+          deliveryFee: Number(data.delivery_fee || 0),
+          discount: Number(data.discount || 0),
+          total: Number(data.total || 0),
+          status: data.status || "new",
+          createdAt: data.created_at || new Date().toISOString(),
+        },
+        error: null,
+      };
     } catch (e) {
-      console.warn("Error fetching order via Supabase, falling back to local cache", e);
+      return { data: null, error: e.message || "Network error loading order" };
     }
   }
 
-  // Fallback to local storage
-  try {
-    const saved = localStorage.getItem("latest_order");
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      if (parsed.orderId === orderNumber) return parsed;
+  // Fallback to local storage ONLY in development mode (import.meta.env.DEV)
+  if (import.meta.env.DEV) {
+    try {
+      const saved = localStorage.getItem("latest_order");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed.orderId === cleanOrderNumber) {
+          const fullName = (parsed.customer?.fullName || "").trim();
+          const firstName = fullName ? fullName.split(" ")[0] : "";
+          return {
+            data: {
+              ...parsed,
+              customer: {
+                ...parsed.customer,
+                firstName: firstName || "Valued Customer",
+              },
+            },
+            error: null,
+          };
+        }
+      }
+      return { data: null, error: null };
+    } catch (err) {
+      return { data: null, error: err.message };
     }
-  } catch (err) {
-    console.error(err);
   }
 
-  return null;
+  return { data: null, error: "Database connection unavailable" };
 }
