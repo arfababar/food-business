@@ -250,10 +250,10 @@ export default function Checkout() {
         )}
 
         <h1 className="text-3xl font-black text-neutral-900 tracking-tight mb-2">
-          Delivery & Checkout ({BUSINESS_CONFIG.city})
+          {BUSINESS_CONFIG.name} Checkout ({BUSINESS_CONFIG.city})
         </h1>
         <p className="text-sm text-neutral-500 mb-8">
-          Please provide your delivery details. Payment is Cash on Delivery only.
+          Please provide your delivery details for {BUSINESS_CONFIG.name}. Payment is Cash on Delivery only.
         </p>
 
         <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-12 gap-10">
@@ -415,12 +415,16 @@ export default function Checkout() {
                   <div key={item.product.id} className="py-3 flex items-center justify-between text-sm">
                     <div className="flex items-center gap-3">
                       <img
-                        src={item.product.image}
+                        src={item.product.image || "/images/placeholder.svg"}
                         alt={item.product.name}
                         className="w-10 h-10 rounded-lg object-cover"
                         width="40"
                         height="40"
                         loading="lazy"
+                        onError={(e) => {
+                          e.currentTarget.onerror = null;
+                          e.currentTarget.src = "/images/placeholder.svg";
+                        }}
                       />
                       <div>
                         <p className="font-bold text-neutral-900 text-xs sm:text-sm">{item.product.name}</p>

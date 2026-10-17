@@ -61,7 +61,7 @@ export default function Cart() {
           <div>
             <h1 className="text-3xl font-black text-neutral-900 tracking-tight">Your Order Cart</h1>
             <p className="text-xs text-neutral-500 mt-1">
-              Review your items and proceed to instant checkout for {BUSINESS_CONFIG.city}
+              Review your {BUSINESS_CONFIG.name} items and proceed to instant checkout for {BUSINESS_CONFIG.city}
             </p>
           </div>
           <button
@@ -108,12 +108,16 @@ export default function Cart() {
                     className="w-24 h-24 rounded-2xl bg-neutral-100 overflow-hidden flex-shrink-0"
                   >
                     <img
-                      src={item.product.image}
+                      src={item.product.image || "/images/placeholder.svg"}
                       alt={item.product.name}
                       className="w-full h-full object-cover"
                       width="96"
                       height="96"
                       loading="lazy"
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = "/images/placeholder.svg";
+                      }}
                     />
                   </Link>
 

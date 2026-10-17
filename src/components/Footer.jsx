@@ -48,7 +48,16 @@ export default function Footer() {
         <div className="space-y-4">
           <div className="flex items-center space-x-2">
             <span className="text-2xl font-black tracking-tight text-white">
-              BABA <span className="text-amber-500">HAFEEZ</span>
+              {(() => {
+                const parts = BUSINESS_CONFIG.name.split(" ");
+                if (parts.length <= 1) return <span className="text-amber-500">{BUSINESS_CONFIG.name}</span>;
+                return (
+                  <>
+                    {parts.slice(0, -1).join(" ")}{" "}
+                    <span className="text-amber-500">{parts[parts.length - 1]}</span>
+                  </>
+                );
+              })()}
             </span>
           </div>
           <p className="text-sm text-neutral-400 leading-relaxed">
@@ -56,7 +65,7 @@ export default function Footer() {
           </p>
           <div className="pt-2">
             <a
-              href={`https://wa.me/${BUSINESS_CONFIG.whatsappNumber}?text=Hi%20Baba%20Hafeez,%20I%20want%20to%20order!`}
+              href={`https://wa.me/${BUSINESS_CONFIG.whatsappNumber}?text=${encodeURIComponent(`Hi ${BUSINESS_CONFIG.name}, I want to order!`)}`}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-sm font-semibold transition"
@@ -73,7 +82,7 @@ export default function Footer() {
             <li><Link to="/" className="hover:text-amber-400 transition">Home</Link></li>
             <li><Link to="/menu" className="hover:text-amber-400 transition">Our Menu</Link></li>
             <li><Link to="/menu?category=deals" className="hover:text-amber-400 transition">Value Deals</Link></li>
-            <li><Link to="/about" className="hover:text-amber-400 transition">About Baba Hafeez</Link></li>
+            <li><Link to="/about" className="hover:text-amber-400 transition">About {BUSINESS_CONFIG.name}</Link></li>
             <li><Link to="/contact" className="hover:text-amber-400 transition">Contact & Location</Link></li>
             <li><Link to="/cart" className="hover:text-amber-400 transition">Shopping Cart</Link></li>
           </ul>
@@ -130,6 +139,7 @@ export default function Footer() {
       <div className="border-t border-neutral-800 py-6 text-center text-xs text-neutral-500">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p>© {new Date().getFullYear()} {BUSINESS_CONFIG.name}. All Rights Reserved.</p>
+          <p className="text-amber-500 font-semibold tracking-wide">Demo project. Not a real restaurant.</p>
           <div className="flex gap-4">
             <Link to="/privacy-policy" className="hover:text-amber-400 transition">Privacy Policy</Link>
             <span>•</span>

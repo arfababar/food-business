@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { CartContext } from "./CartContext";
 
-const CART_STORAGE_KEY = "baba_hafeez_cart";
+const CART_STORAGE_KEY = "crunch_box_cart";
 const FREE_DELIVERY_THRESHOLD = 1500;
 const STANDARD_DELIVERY_FEE = 150;
 

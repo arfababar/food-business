@@ -27,7 +27,7 @@ function NoOrderSpecified() {
           No order specified
         </h1>
         <p className="text-neutral-500 text-sm mb-6">
-          No order reference was provided in the URL. Please verify your order confirmation link or browse our menu to place an order.
+          No order reference was provided in the URL. Please verify your order confirmation link or browse our menu to place an order with {BUSINESS_CONFIG.name}.
         </p>
         <Link
           to="/menu"
@@ -265,7 +265,7 @@ function OrderDetails({ orderNumber }) {
               <span>Send order on WhatsApp</span>
             </a>
             <p className="text-[11px] sm:text-xs text-neutral-500 mt-2 leading-relaxed">
-              Tap above to send your order details to us on WhatsApp.
+              Tap above to send your order details to {BUSINESS_CONFIG.name} on WhatsApp.
             </p>
 
             {/* Secondary Actions: Call Us Hotline and Menu link */}
@@ -284,6 +284,10 @@ function OrderDetails({ orderNumber }) {
                 <ShoppingBag className="w-3.5 h-3.5" /> Menu
               </Link>
             </div>
+
+            <p className="text-[11px] text-neutral-400 mt-3 font-medium">
+              Demo project: WhatsApp and phone numbers are placeholders.
+            </p>
           </div>
         </div>
 

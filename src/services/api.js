@@ -2,11 +2,55 @@ import { supabase, isSupabaseConfigured } from "../lib/supabase";
 import { products as fallbackProducts } from "../data/products";
 
 /**
+ * Resolves a safe local image path for a product.
+ * If image_url is missing or starts with "http" or "//", it replaces it
+ * with the matching local image from products.js (by id, then by name).
+ * If no match is found, falls back to /images/placeholder.svg.
+ */
+export function resolveProductImage(imageUrl, id, name) {
+  const isRemoteOrMissing =
+    !imageUrl ||
+    typeof imageUrl !== "string" ||
+    imageUrl.trim() === "" ||
+    imageUrl.trim().startsWith("http://") ||
+    imageUrl.trim().startsWith("https://") ||
+    imageUrl.trim().startsWith("//");
+
+  if (!isRemoteOrMissing) {
+    return imageUrl.trim();
+  }
+
+  // 1. Match by id
+  const matchById = fallbackProducts.find((p) => p.id === id);
+  if (matchById?.image && !matchById.image.startsWith("http://") && !matchById.image.startsWith("https://") && !matchById.image.startsWith("//")) {
+    return matchById.image;
+  }
+
+  // 2. Match by name (case-insensitive)
+  if (name && typeof name === "string") {
+    const cleanName = name.trim().toLowerCase();
+    const matchByName = fallbackProducts.find(
+      (p) => p.name && p.name.trim().toLowerCase() === cleanName
+    );
+    if (matchByName?.image && !matchByName.image.startsWith("http://") && !matchByName.image.startsWith("https://") && !matchByName.image.startsWith("//")) {
+      return matchByName.image;
+    }
+  }
+
+  // 3. Fallback placeholder
+  return "/images/placeholder.svg";
+}
+
+/**
  * Fetch products from Supabase, or fall back to local dataset if unavailable.
  */
 export async function getProducts() {
   if (!isSupabaseConfigured || !supabase) {
-    return { data: fallbackProducts, isFallback: true };
+    const safeFallback = fallbackProducts.map((p) => ({
+      ...p,
+      image: resolveProductImage(p.image, p.id, p.name),
+    }));
+    return { data: safeFallback, isFallback: true };
   }
 
   try {
@@ -18,7 +62,11 @@ export async function getProducts() {
 
     if (error || !data || data.length === 0) {
       console.warn("Could not fetch products from Supabase, using local fallback.", error);
-      return { data: fallbackProducts, isFallback: true };
+      const safeFallback = fallbackProducts.map((p) => ({
+        ...p,
+        image: resolveProductImage(p.image, p.id, p.name),
+      }));
+      return { data: safeFallback, isFallback: true };
     }
 
     // Map database fields to application shape
@@ -29,7 +77,7 @@ export async function getProducts() {
       price: Number(item.price),
       originalPrice: item.original_price ? Number(item.original_price) : undefined,
       description: item.description,
-      image: item.image_url,
+      image: resolveProductImage(item.image_url, item.id, item.name),
       badge: item.badge,
       prepTime: item.prep_time || "15-20 mins",
       spicyLevel: item.spicy_level || "Regular",
@@ -39,7 +87,11 @@ export async function getProducts() {
     return { data: formatted, isFallback: false };
   } catch (err) {
     console.error("Network error fetching products:", err);
-    return { data: fallbackProducts, isFallback: true };
+    const safeFallback = fallbackProducts.map((p) => ({
+      ...p,
+      image: resolveProductImage(p.image, p.id, p.name),
+    }));
+    return { data: safeFallback, isFallback: true };
   }
 }
 

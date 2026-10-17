@@ -34,7 +34,7 @@ async function verifyOrderSuccessMobile() {
 
   // Fill Checkout Form
   await page.fill("input[placeholder*='Tariq']", "Asim Munir");
-  await page.fill("input[placeholder*='0300']", "0325-6800347");
+  await page.fill("input[placeholder*='0300']", "0300-1234567");
   await page.fill("input[placeholder*='House']", "House 12, Street 4, Model Town");
 
   // Check no auto-open popup happens
@@ -107,6 +107,9 @@ async function verifyOrderSuccessMobile() {
   console.log("Verified WhatsApp button href:", waHref);
   if (!waHref.includes(encodeURIComponent(currentOrderNum)) && !waHref.includes(currentOrderNum)) {
     throw new Error(`WhatsApp button href does not contain order number ${currentOrderNum}`);
+  }
+  if (!waHref.includes("wa.me/923000000000")) {
+    throw new Error(`WhatsApp button href does not contain wa.me/923000000000: ${waHref}`);
   }
 
   // Save screenshot

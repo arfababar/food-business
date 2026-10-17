@@ -5,7 +5,7 @@ export default function SEO({
   title,
   description = BUSINESS_CONFIG.description,
   image = "/favicon.svg",
-  url = "https://babahafeez.com",
+  url = BUSINESS_CONFIG.siteUrl || "https://crunchbox.com",
 }) {
   const fullTitle = title
     ? `${title} | ${BUSINESS_CONFIG.name} (${BUSINESS_CONFIG.city})`
@@ -16,7 +16,7 @@ export default function SEO({
     "@type": "FastFoodRestaurant",
     name: BUSINESS_CONFIG.name,
     description: BUSINESS_CONFIG.description,
-    url: "https://babahafeez.com",
+    url: BUSINESS_CONFIG.siteUrl || "https://crunchbox.com",
     telephone: BUSINESS_CONFIG.hotlineDisplay,
     servesCuisine: "Fast Food, Burgers, Loaded Fries",
     priceRange: "PKR 120 - 2200",

@@ -60,7 +60,16 @@ export default function Navbar() {
             </div>
             <div>
               <span className="text-xl sm:text-2xl font-black tracking-tight text-neutral-900 block leading-tight">
-                BABA <span className="text-amber-600">HAFEEZ</span>
+                {(() => {
+                  const parts = BUSINESS_CONFIG.name.split(" ");
+                  if (parts.length <= 1) return <span className="text-amber-600">{BUSINESS_CONFIG.name}</span>;
+                  return (
+                    <>
+                      {parts.slice(0, -1).join(" ")}{" "}
+                      <span className="text-amber-600">{parts[parts.length - 1]}</span>
+                    </>
+                  );
+                })()}
               </span>
               <span className="text-[11px] font-bold tracking-widest uppercase text-neutral-500 block">
                 {BUSINESS_CONFIG.tagline} • {BUSINESS_CONFIG.city}

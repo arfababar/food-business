@@ -23,10 +23,16 @@ export default function ProductCard({ product }) {
       {/* Product Image Area */}
       <div className="relative w-28 h-full sm:w-full sm:h-auto sm:aspect-4/3 bg-neutral-100 overflow-hidden flex-shrink-0">
         <img
-          src={product.image}
+          src={product.image || "/images/placeholder.svg"}
           alt={product.name}
+          width="400"
+          height="300"
           className="w-full h-full object-cover object-center group-hover:scale-105 sm:group-hover:scale-108 transition-transform duration-500"
           loading="lazy"
+          onError={(e) => {
+            e.currentTarget.onerror = null;
+            e.currentTarget.src = "/images/placeholder.svg";
+          }}
         />
 
         {/* Badges */}

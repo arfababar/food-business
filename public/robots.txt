@@ -3,4 +3,4 @@ Allow: /
 Disallow: /checkout
 Disallow: /order-success
 
-Sitemap: https://babahafeez.com/sitemap.xml
+Sitemap: https://crunchbox.com/sitemap.xml

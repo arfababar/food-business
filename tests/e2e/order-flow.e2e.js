@@ -138,7 +138,7 @@ async function runE2E() {
   await waButton.waitFor({ state: "visible" });
   const waHref = await waButton.getAttribute("href");
   console.log("Verified primary WhatsApp button href:", waHref);
-  if (!waHref || !waHref.startsWith("https://wa.me/")) {
+  if (!waHref || !waHref.startsWith("https://wa.me/923000000000")) {
     throw new Error(`Invalid WhatsApp button link: ${waHref}`);
   }
   if (!waHref.includes(encodeURIComponent(currentOrderNum)) && !waHref.includes(currentOrderNum)) {
@@ -180,11 +180,11 @@ async function runE2E() {
   const waButtonA = pageA.locator("a:has-text('Send order on WhatsApp')");
   const waHrefA = await waButtonA.getAttribute("href");
   console.log("Verified direct lookup WhatsApp href:", waHrefA);
-  if (!waHrefA || !waHrefA.includes(currentOrderNum)) {
-    throw new Error(`Direct lookup WhatsApp button href missing ${currentOrderNum}`);
+  if (!waHrefA || !waHrefA.includes(currentOrderNum) || !waHrefA.startsWith("https://wa.me/923000000000")) {
+    throw new Error(`Direct lookup WhatsApp button href missing ${currentOrderNum} or wrong number`);
   }
   const decodedA = decodeURIComponent(waHrefA);
-  if (!decodedA.includes(`Hi Baba Hafeez, my order number is ${currentOrderNum}.`)) {
+  if (!decodedA.includes(`Hi Crunch Box, my order number is ${currentOrderNum}.`)) {
     throw new Error(`Expected short inquiry message on direct link, but got:\n${decodedA}`);
   }
 

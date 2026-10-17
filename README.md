@@ -1,6 +1,6 @@
-# Fast Food & Grill (Gujranwala)
+# Crunch Box - Fast Food & Grill (Gujranwala)
 
-Production-ready e-commerce food ordering platform built for **Baba Hafeez** in Gujranwala, Pakistan.
+Production-ready e-commerce food ordering platform built for **Crunch Box** in Gujranwala, Pakistan.
 
 ## Tech Stack
 * **Frontend:** React 19, Vite 8, Tailwind CSS v4, Lucide React, React Router v7

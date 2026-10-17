@@ -55,6 +55,9 @@ export default function Contact() {
           <p className="text-neutral-500 text-sm mt-2">
             Have questions about an order or feedback? Contact us or drop by our kitchen in {BUSINESS_CONFIG.city}!
           </p>
+          <p className="text-xs text-amber-600 font-semibold mt-2">
+            Demo project: WhatsApp and phone numbers are placeholders.
+          </p>
         </div>
 
         {/* 3 Quick Contact Cards */}
@@ -72,7 +75,7 @@ export default function Contact() {
           </a>
 
           <a
-            href={`https://wa.me/${BUSINESS_CONFIG.whatsappNumber}?text=Hi%20Baba%20Hafeez,%20inquiring%20about%20an%20order`}
+            href={`https://wa.me/${BUSINESS_CONFIG.whatsappNumber}?text=${encodeURIComponent(`Hi ${BUSINESS_CONFIG.name}, inquiring about an order`)}`}
             target="_blank"
             rel="noopener noreferrer"
             className="p-6 bg-white rounded-3xl border border-neutral-200/80 shadow-xs hover:border-emerald-500 transition group"
@@ -203,12 +206,16 @@ export default function Contact() {
             {/* Visual map preview mockup */}
             <div className="rounded-2xl overflow-hidden bg-neutral-100 border border-neutral-200 h-52 relative flex items-center justify-center">
               <img
-                src="https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?w=800&auto=format&fit=crop&q=80"
-                alt="Map view placeholder"
+                src="/images/contact-kitchen.webp"
+                alt="Kitchen location map preview"
                 className="w-full h-full object-cover filter brightness-90"
                 width="400"
                 height="208"
                 loading="lazy"
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = "/images/placeholder.svg";
+                }}
               />
               <div className="absolute inset-0 bg-neutral-900/40 flex items-center justify-center">
                 <a

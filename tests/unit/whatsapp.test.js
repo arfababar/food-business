@@ -18,7 +18,7 @@ describe("buildWhatsAppOrderLink", () => {
       instructions: "No pickles",
     });
 
-    expect(link).toContain("https://wa.me/923256800347");
+    expect(link).toContain("https://wa.me/923000000000");
     expect(link).toContain("BH-1002");
     expect(link).toContain("Ali%20Hassan");
     expect(link).toContain("Classic%20Zinger%20Burger");
@@ -49,7 +49,7 @@ describe("buildWhatsAppOrderLink", () => {
     expect(() => new URL(link)).not.toThrow();
     // Decodes cleanly back to original Urdu and symbols
     const urlObj = new URL(link);
-    expect(link).toContain("https://wa.me/923256800347");
+    expect(link).toContain("https://wa.me/923000000000");
     const decodedText = urlObj.searchParams.get("text") || "";
     expect(decodedText).toContain("محمد علی & Sons");
     expect(decodedText).toContain("*Address:* Shop # 15 & 16, Market 100%");
@@ -65,12 +65,12 @@ describe("buildWhatsAppOrderLink", () => {
       total: 550,
     });
 
-    expect(shortLink).toContain("https://wa.me/923256800347");
+    expect(shortLink).toContain("https://wa.me/923000000000");
     expect(() => new URL(shortLink)).not.toThrow();
 
     const urlObj = new URL(shortLink);
     const text = urlObj.searchParams.get("text") || "";
-    expect(text).toContain("Hi Baba Hafeez, my order number is BH-1005#special.");
+    expect(text).toContain("Hi Crunch Box, my order number is BH-1005#special.");
     expect(text).toContain("تکہ برگر & Fries");
     expect(text).toContain("Rs. 550");
   });
@@ -79,7 +79,7 @@ describe("buildWhatsAppOrderLink", () => {
     const link = buildWhatsAppOrderLink({
       orderNumber: "BH-1006",
       customerName: "Zahid Ahmed",
-      phone: "03256800347",
+      phone: "03000000000",
       address: "House 28, Street 7, Model Town",
       area: "Model Town",
       city: "Gujranwala",

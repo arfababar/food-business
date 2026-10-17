@@ -7,6 +7,7 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import { CartProvider } from "./context/CartProvider";
 import { Loader2 } from "lucide-react";
 import { isSupabaseConfigured, supabase } from "./lib/supabase";
+import { BUSINESS_CONFIG } from "./config/business";
 
 // Code-split pages for high performance
 const Home = lazy(() => import("./pages/Home"));
@@ -26,7 +27,7 @@ function PageLoader() {
   return (
     <div className="min-h-[50vh] flex flex-col items-center justify-center py-20 text-center">
       <Loader2 className="w-8 h-8 text-amber-500 animate-spin mb-2" />
-      <span className="text-xs font-bold text-neutral-500">Loading Baba Hafeez...</span>
+      <span className="text-xs font-bold text-neutral-500">Loading {BUSINESS_CONFIG.name}...</span>
     </div>
   );
 }

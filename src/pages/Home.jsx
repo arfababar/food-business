@@ -99,12 +99,16 @@ export default function Home() {
             <div className="lg:col-span-5 relative flex justify-center">
               <div className="relative w-full max-w-md aspect-square rounded-3xl overflow-hidden border-2 border-amber-500/30 shadow-2xl shadow-amber-500/10 group">
                 <img
-                  src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=900&auto=format&fit=crop&q=80"
+                  src="/images/hero-burger.webp"
                   alt="Delicious Zinger Burger"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                   width="450"
                   height="450"
                   loading="eager"
+                  onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = "/images/placeholder.svg";
+                  }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/80 via-transparent to-transparent"></div>
                 
@@ -208,7 +212,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Why Choose Baba Hafeez */}
+      {/* Why Choose Us */}
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-xl mx-auto mb-14">
@@ -280,7 +284,7 @@ export default function Home() {
               </p>
             </div>
             <a
-              href={`https://wa.me/${BUSINESS_CONFIG.whatsappNumber}?text=Hi%20Baba%20Hafeez,%20I%20want%20to%20place%20an%20order!`}
+              href={`https://wa.me/${BUSINESS_CONFIG.whatsappNumber}?text=${encodeURIComponent(`Hi ${BUSINESS_CONFIG.name}, I want to place an order!`)}`}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-3 px-8 py-4 bg-emerald-500 hover:bg-emerald-400 text-neutral-950 font-black rounded-2xl text-base transition-all shadow-lg shadow-emerald-500/25 active:scale-95 flex-shrink-0"

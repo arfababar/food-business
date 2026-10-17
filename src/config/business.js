@@ -1,17 +1,18 @@
-// Centralized business configuration for Baba Hafeez
+// Centralized business configuration for Crunch Box
 // All phone numbers, addresses, delivery areas, hours, and operational constants live here.
 
 export const BUSINESS_CONFIG = {
-  name: "Baba Hafeez",
+  name: "Crunch Box",
   tagline: "Fast Food & Grill",
+  siteUrl: "https://crunchbox.com",
   description:
     "Handcrafted crispy zingers, gourmet smashed beef patties, and loaded cheesy fries in Gujranwala.",
   
   // Contacts
-  whatsappNumber: "923256800347",
-  hotlineDisplay: "0325-6800347",
-  hotlineTel: "+923256800347",
-  email: "orders@babahafeez.com",
+  whatsappNumber: "923000000000",
+  hotlineDisplay: "0300-0000000",
+  hotlineTel: "+923000000000",
+  email: "orders@crunchbox.com",
 
   // Location (Gujranwala)
   city: "Gujranwala",

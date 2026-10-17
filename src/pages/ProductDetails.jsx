@@ -100,12 +100,16 @@ export default function ProductDetails() {
             {/* Left: Product Image */}
             <div className="relative rounded-2xl overflow-hidden aspect-square bg-neutral-100 flex items-center justify-center shadow-inner">
               <img
-                src={product.image}
+                src={product.image || "/images/placeholder.svg"}
                 alt={product.name}
                 className="w-full h-full object-cover object-center"
                 width="500"
                 height="500"
-                loading="eager"
+                loading="lazy"
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = "/images/placeholder.svg";
+                }}
               />
               {product.badge && (
                 <span className="absolute top-4 left-4 bg-amber-500 text-neutral-900 text-xs font-black uppercase px-3 py-1.5 rounded-full shadow-md">

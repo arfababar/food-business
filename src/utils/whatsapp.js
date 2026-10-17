@@ -79,7 +79,7 @@ export function buildWhatsAppOrderLink({
 
 /**
  * Builds a short WhatsApp inquiry link for refreshed or direct links (no router state).
- * Format: "Hi Baba Hafeez, my order number is BH-XXXX" + items + total
+ * Format: "Hi [Brand Name], my order number is BH-XXXX" + items + total
  */
 export function buildWhatsAppShortLink({
   orderNumber,
